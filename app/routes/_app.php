@@ -327,3 +327,51 @@ PROMPT;
         ], 500);
     }
 });
+
+
+// ...tus rutas previas
+
+app()->get('/archive', function () {
+    // /nytheria/app/routes  -> subir 2 niveles -> /nytheria
+    $root       = dirname(__DIR__, 2);
+    $publicPath = $root . '/public';
+    $ideasDir   = $publicPath . '/ideas';
+
+    if (!is_dir($ideasDir)) {
+        @mkdir($ideasDir, 0775, true);
+    }
+
+    $glob = glob($ideasDir . DIRECTORY_SEPARATOR . '*.txt') ?: [];
+
+    // helper tamaño legible
+    $humanSize = function ($bytes) {
+        $u = ['B', 'KB', 'MB', 'GB'];
+        $i = 0;
+        while ($bytes >= 1024 && $i < count($u) - 1) {
+            $bytes /= 1024;
+            $i++;
+        }
+        return sprintf('%.1f %s', $bytes, $u[$i]);
+    };
+
+    $files = [];
+    foreach ($glob as $path) {
+        $name = basename($path);
+        $mtime = @filemtime($path) ?: time();
+        $size  = @filesize($path) ?: 0;
+
+        $files[] = [
+            'name'        => $name,
+            'size'        => $size,
+            'size_h'      => $humanSize($size),
+            'mtime'       => $mtime,
+            'modified_h'  => date('Y-m-d H:i', $mtime),
+            'url'         => '/ideas/' . rawurlencode($name), // público
+        ];
+    }
+
+    usort($files, fn($a, $b) => $b['mtime'] <=> $a['mtime']);
+
+    // Render Blade
+    return render('archive', ['files' => $files]);
+});

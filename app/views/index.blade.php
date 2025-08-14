@@ -58,8 +58,8 @@
         .wrap {
             max-width: 130rem;
             margin-inline: auto;
-            padding-inline: 1rem;
             overflow-x: auto;
+            margin-top: 1rem
         }
 
         /* NEW: two-column layout, right panel spans both rows */
@@ -394,6 +394,43 @@
 </head>
 
 <body>
+    <div
+        style="border-radius: 10px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border); background:var(--bg-2); padding:4px 10px; font-family:monospace; font-size:13px; letter-spacing:0.5px; color:var(--text);">
+
+        <!-- Left -->
+        <a href="https://x.com/Eserya77" target="_blank"
+            style="color:var(--lavender); text-decoration:none; padding:0 6px; border-right:1px solid var(--border);">
+            X_PROFILE
+        </a>
+
+        <!-- Center -->
+        <a href="/archive"
+            style="color:var(--ok); text-decoration:none; padding:0 6px; border-right:1px solid var(--border);">
+            ARCHIVE
+        </a>
+
+        <!-- Right -->
+        <span id="contract-address" onclick="copyContract()" style="cursor:pointer; padding:0 6px; color:var(--err);">
+            CONTRACT: 0x1234...abcd
+        </span>
+
+    </div>
+
+    <script>
+        function copyContract() {
+            const contract = "0x1234567890abcdef1234567890abcdef12345678";
+            navigator.clipboard.writeText(contract).then(() => {
+                const el = document.getElementById("contract-address");
+                const original = el.textContent;
+                el.textContent = "[COPIED]";
+                setTimeout(() => {
+                    el.textContent = original;
+                }, 1500);
+            });
+        }
+    </script>
+
+
     <div class="wrap" x-data="ideaTerminal()" x-init="$nextTick(() => status = 'Ready. Press Ctrl/Cmd+Enter to run.')" @keydown.ctrl.enter.prevent="submit()"
         @keydown.meta.enter.prevent="submit()">
 
